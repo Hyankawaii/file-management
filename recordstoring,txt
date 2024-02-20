@@ -1,0 +1,46 @@
+TYPE Student 
+    DECLARE Student_name: STRING
+    DECLARE Student_class: STRING
+    DECLARE Student_DOB: DATE 
+    DECLARE Student_ID: STRING
+ENDTYPE
+
+DECLARE Student_ARRAY : ARRAY[1:50] OF Student
+DECLARE Studentfile : STRING
+DECLARE counter : INTEGER
+
+counter <-- 1
+Studentfile <-- "studentfile.dat"
+OPEN studentfile FOR WRITE
+
+REPEAT 
+    OUTPUT " please enter the student's details "
+    OUTPUT " please enter the student's name "
+    INPUT Student_ARRAY[counter].Student_name
+    IF Student_ARRAY[counter].Student_name <> "" THEN
+        OUTPUT " please enter the student's class "
+        INPUT Student_ARRAY[counter].Student_class
+
+        OUTPUT " please enter the student's date of birth "
+        INPUT Student_ARRAY[counter].Student_DOB  
+
+        OUTPUT " please enter the student's id "
+        INPUT Student_ARRAY[counter].Student_ID
+
+        PUTRECORD studentfile, Student_ARRAY[counter]
+        counter <-- counter + 1
+    ELSE 
+        CLOSEFILE(studentfile)
+UNTIL Student_ARRAY[counter].Student_name = "" OR counter = 50
+CLOSEFILE(studentfile)
+
+OUTPUT  "the file contains these records "
+OPEN studentfile FOR READ
+counter <-- 1
+REPEAT
+    GETRECORD , Studentfile[counter]
+    OUTPUT studentfile[counter]
+    counter <-- counter + 1
+UNTIL EOF 
+
+CLOSEFILE(studentfile)
