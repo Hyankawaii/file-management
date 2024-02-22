@@ -1,0 +1,36 @@
+TYPE Student 
+    DECLARE Student_name: STRING
+    DECLARE Student_class: STRING
+    DECLARE Student_DOB: DATE 
+    DECLARE Student_ID: INTEGER
+ENDTYPE
+
+
+NEWREC <-- Student()
+studentfile <-- "studentfile.dat"
+OPENFILE studentfile FOR READ
+newfile <-- "newfile.dat"
+CREATE FILE newfile
+OPENFILE newfile FOR WRITE
+inserted = FALSE
+WHILE NOT EOF AND inserted = FALSE
+    
+    GETRECORD Studentfile buffer
+    if NEWREC.Student_ID < buffer.Student_ID  THEN
+        PUTRECORD newfile, buffer
+    ELSE
+        PUTRECORD newfile, NEWREC
+        PUTRECORD newfile, buffer
+        inserted = TRUE
+    ENDIF
+ENDWHILE
+
+IF inserted = FALSE THEN
+    PUTRECORD newfile, NEWREC
+ELSE
+    WHILE NOT EOF
+    GETRECORD Studentfile buffer
+    PUTRECORD newfile, buffer
+
+DELETE studentfile
+RENAME newfile, studentfile
